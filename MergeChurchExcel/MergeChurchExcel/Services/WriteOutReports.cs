@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace MergeChurchExcel.Services
 {
@@ -22,13 +23,12 @@ namespace MergeChurchExcel.Services
 
         public void Write()
         {
+            var giver = _data[0].Person.Replace("  ", " ");
             using (var writer = new StreamWriter(_file))
             {
-                writer.WriteLine();
-                writer.WriteLine();
-                writer.WriteLine($"Filipino American Community Church");
-                writer.WriteLine($"Year end individual giving report");
-                writer.WriteLine($"Prepared for:  {_data[0].Person}");
+                writer.WriteLine(Addresses.Header);
+                writer.WriteLine(Addresses.ReportTitle);
+                writer.WriteLine($"{new string(' ', 40)}Prepared for:  {giver}");
                 writer.WriteLine();
                 writer.WriteLine();
                 writer.WriteLine(FormatHeaders());
@@ -37,19 +37,48 @@ namespace MergeChurchExcel.Services
                     writer.WriteLine(FormateRows(row));
                 }
                 writer.WriteLine();
-                var total = $"Total {new string('.', 72)}{_data.Sum(x => x.TotalAmount):c}";
+                writer.WriteLine(GetTotals());
+                writer.WriteLine(Addresses.Treasurer);
             }
+        }
+
+        private string GetTotals()
+        {
+            var tithes = "Tithes and Offerings";
+            var tithesRows = _data.Where(x => x.Category == tithes).ToList();
+            var sb = new StringBuilder();
+            if (tithesRows.Count > 0) //Only print rows if there are rows to print
+            {
+                sb.Append($"{new string(' ', 10)}Total Tithe    {new string('.', 65)}{tithesRows.Sum(x => x.TotalAmount):c}");
+                sb.Append(Environment.NewLine);
+            }
+            var otherRows = _data.Where(x => x.Category != tithes).ToList();
+            if (otherRows.Count > 0)
+            {
+                sb.Append($"{new string(' ', 10)}Total Other    {new string('.', 65)}{otherRows.Sum(x => x.TotalAmount):c}");
+                sb.Append(Environment.NewLine);
+            }
+            return sb.ToString();
         }
 
         private string FormateRows(Transactions row)
         {
             var date = row.Date.ToShortDateString().PadRight(15);
             var category = row.Category.PadRight(30);
-            var checkNum = row.CheckNumber.ToString().PadRight(15);
+            var checkNum = FormatCheckNumber(row.CheckNumber);
             var check = FormatMoney(row.CheckAmount).PadRight(10);
             var cash = FormatMoney(row.CashAmount).PadRight(10);
-            var total = $"{check + cash:c}";
-            return $"{date}{category}{checkNum}{check}{cash}{total}";
+            var total = $"{row.CheckAmount + row.CashAmount:c}";
+            return $"{new string(' ', 10)}{date}{category}{checkNum}{check}{cash}{total}";
+        }
+
+        private string FormatCheckNumber(int checkNumber)
+        {
+            if (checkNumber == 0)
+            {
+                return new string(' ', 15);
+            }
+            return $"{checkNumber}".PadRight(15);
         }
 
         private string FormatMoney(decimal? money)
@@ -66,7 +95,7 @@ namespace MergeChurchExcel.Services
             var check = "Check".PadRight(10);
             var cash = "Cash".PadRight(10);
             var total = "Total";
-            return $"{date}{category}{checkNum}{check}{cash}{total}";
+            return $"{new string(' ', 10)}{date}{category}{checkNum}{check}{cash}{total}";
         }
     }
 }
