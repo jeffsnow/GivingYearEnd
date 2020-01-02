@@ -59,6 +59,7 @@
     <Compile Include="Services\GetSingleWeek.cs" />
     <Compile Include="Services\GroupLikePeople.cs" />
     <Compile Include="Services\SaveAllToExcel.cs" />
+    <Compile Include="Services\WriteOutAllPeople.cs" />
     <Compile Include="Services\WriteOutReports.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -22,6 +22,16 @@ namespace MergeChurchExcel
             Console.WriteLine("Writing Master File");
             var newExcel = new SaveAllToExcel(models);
             newExcel.Run(GetFileName());
+            Console.WriteLine("Writing updated people for template");
+            var updatedNames = new WriteOutAllPeople(models);
+            updatedNames.Write(GetPeoplFile());
+            Console.WriteLine("Complete!");
+            Console.ReadKey();
+        }
+
+        private static string GetPeoplFile()
+        {
+            return Path.Combine(Addresses.WriteFolder, "UpdatedPeople.csv");
         }
 
         private static string GetFileName()

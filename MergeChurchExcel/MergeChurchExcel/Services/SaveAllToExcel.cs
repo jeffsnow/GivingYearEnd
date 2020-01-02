@@ -22,6 +22,7 @@ namespace MergeChurchExcel.Services
 
         public void Run(string fileLocation)
         {
+            DeleteIfExist(fileLocation);
             FileInfo file = new FileInfo(fileLocation);
             using (ExcelPackage pck = new ExcelPackage(file))
             {
@@ -29,6 +30,12 @@ namespace MergeChurchExcel.Services
                 ws.Cells["A1"].LoadFromDataTable(_dataTable, true);
                 pck.Save();
             }
+        }
+
+        private void DeleteIfExist(string fileLocation)
+        {
+            if (File.Exists(fileLocation))
+            { File.Delete(fileLocation); }
         }
     }
 }

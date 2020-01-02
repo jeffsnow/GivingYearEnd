@@ -24,7 +24,7 @@ namespace MergeChurchExcel.Services
         public void Write()
         {
             var giver = _data[0].Person.Replace("  ", " ");
-            using (var writer = new StreamWriter(_file))
+            using (var writer = new StreamWriter(_file, false)) //false overwrites files
             {
                 writer.WriteLine(Addresses.Header);
                 writer.WriteLine(Addresses.ReportTitle);
