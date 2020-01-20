@@ -3,6 +3,7 @@ using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace MergeChurchExcel.Services
 {
@@ -26,9 +27,13 @@ namespace MergeChurchExcel.Services
         {
             var models = new List<Transactions>();
             var fileInfo = new FileInfo(_fileName);
+
             using (var package = new ExcelPackage(fileInfo))
             {
-                var sheet = package.Workbook.Worksheets["Giving"];
+                //Strange Error with EEPlus  -- EEPlus Object not set
+                //Breakpoint allow setting extra time seams to correct issue
+
+                var sheet = package.Workbook.Worksheets.First();
                 var valuesExist = true;
                 var startLine = 2;
                 while (valuesExist)
