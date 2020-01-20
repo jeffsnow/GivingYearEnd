@@ -14,7 +14,7 @@ namespace PrintDonations
             foreach (var record in allFiles)
             {
                 Console.WriteLine($"Current record{record}...Printing");
-                new Print(file);
+                new Print(record);
                 Console.WriteLine("Press any key for the next record");
                 Console.ReadKey();
             }

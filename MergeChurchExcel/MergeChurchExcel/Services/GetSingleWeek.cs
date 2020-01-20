@@ -44,6 +44,11 @@ namespace MergeChurchExcel.Services
                     var category = GetString(sheet, startLine, 9);
                     var cash = GetDecimal(GetString(sheet, startLine, 12));
                     var check = GetDecimal(GetString(sheet, startLine, 11));
+                    if (date.Year < 2019 && check + cash > 0)// sample code for troubleshooting bad entries in Excel
+                    {
+                        Console.WriteLine(_fileName);
+                    }
+
                     if (person == string.Empty)
                     {
                         valuesExist = false;
