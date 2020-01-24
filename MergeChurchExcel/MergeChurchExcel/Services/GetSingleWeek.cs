@@ -32,7 +32,7 @@ namespace MergeChurchExcel.Services
             {
                 //Strange Error with EEPlus  -- EEPlus Object not set
                 //Breakpoint allow setting extra time seams to correct issue
-
+                var troubleshooting = 0; //Not written
                 var sheet = package.Workbook.Worksheets.First();
                 var valuesExist = true;
                 var startLine = 2;
@@ -44,10 +44,7 @@ namespace MergeChurchExcel.Services
                     var category = GetString(sheet, startLine, 9);
                     var cash = GetDecimal(GetString(sheet, startLine, 12));
                     var check = GetDecimal(GetString(sheet, startLine, 11));
-                    if (date.Year < 2019 && check + cash > 0)// sample code for troubleshooting bad entries in Excel
-                    {
-                        Console.WriteLine(_fileName);
-                    }
+                    troubleshooting = TroubleshootingIssues(date, check, cash, troubleshooting);
 
                     if (person == string.Empty)
                     {
@@ -69,6 +66,22 @@ namespace MergeChurchExcel.Services
             }
 
             return models;
+        }
+
+        private int TroubleshootingIssues(DateTime date, decimal check, decimal cash, int troubleshooting)
+        {
+            if (date.Year < 2019 && check + cash > 0)// sample code for troubleshooting bad entries in Excel
+            {
+                Console.Write("Year before 2019 error:  ");
+                Console.WriteLine(_fileName);
+            }
+            if (date.Month == 11 && date.Day == 4 && troubleshooting == 0)
+            {
+                Console.Write("July 1 error:  ");
+                Console.WriteLine(_fileName);
+                troubleshooting++; //increment only want to write once
+            }
+            return troubleshooting;
         }
 
         private string GetString(ExcelWorksheet sheet, int row, int col)
